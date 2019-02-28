@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/lblArtName"
+        android:layout_width="105dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="26dp"
+        android:text="Bezeichnung"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/lblWg"
+        android:layout_width="105dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Artikelgruppe"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblArtName" />
+
+    <TextView
+        android:id="@+id/lblGeschaeft"
+        android:layout_width="105dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="wird gekauft bei"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblWg" />
+
+    <EditText
+        android:id="@+id/artName"
+        android:layout_width="215dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Name"
+        app:layout_constraintStart_toEndOf="@+id/lblArtName"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/spnWg"
+        android:layout_width="215dp"
+        android:layout_height="21dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:entries="@array/wg_array"
+        android:spinnerMode="dropdown"
+        app:layout_constraintStart_toEndOf="@+id/lblWg"
+        app:layout_constraintTop_toBottomOf="@+id/artName" />
+
+    <Spinner
+        android:id="@+id/spnGeschaeft"
+        android:layout_width="215dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:entries="@array/geschaeft_array"
+        android:spinnerMode="dropdown"
+        app:layout_constraintStart_toEndOf="@+id/lblGeschaeft"
+        app:layout_constraintTop_toBottomOf="@+id/spnWg" />
+</android.support.constraint.ConstraintLayout>
