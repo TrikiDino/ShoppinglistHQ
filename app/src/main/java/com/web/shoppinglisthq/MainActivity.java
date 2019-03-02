@@ -1,18 +1,22 @@
 package com.web.shoppinglisthq;
 
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,11 +28,21 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
     private ShoppingMemoDataSource dataSource;
     private boolean isButtonClick = true;
     private ListView mShoppingMemosListView;
+
+    public String strProduct = "";
+    public boolean productNeu = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +124,52 @@ public class MainActivity extends AppCompatActivity {
         final EditText editTextQuantity = (EditText) findViewById(R.id.editText_quantity);
         final EditText editTextProdukt = (EditText) findViewById(R.id.editText_product);
 
+        editTextProdukt.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                Log.d(TAG, "beforeTextChanged: s:" + s + " start:" + start + " count:" + count + " after:" + after);
+                strProduct = s.toString();
+                List<TblProdukt> produktList = dataSource.getAktProdukt(strProduct);
+                if(produktList!=null) {
+                    Log.d(TAG, "beforeTextChanged: " + produktList.toString());
+                    if (produktList.size() > 0) {
+                        // ToDo Spinner füllen
+                    }
+                } else {
+                    Log.d(TAG, "beforeTextChanged: Tabelle ist leer");
+                }
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        editTextProdukt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                Log.d(TAG, "onFocusChange: " + strProduct);
+                if(!((strProduct==null)||(strProduct.length()==0))) {
+                    List<TblProdukt> produktList = dataSource.getAktProdukt(strProduct);
+                    productNeu = ((produktList == null)||(produktList.size()==0));
+                    Log.d(TAG, "onFocusChange: " + productNeu);
+                    if (productNeu) {
+                        // neuen Artikel erfassen
+                        Log.d(TAG, "onFocusChange: Artikel erfassen");
+                        AlertDialog editProduktDialog = createEditProduktDialog();
+                        editProduktDialog.show();
+                    }
+                }
+            }
+        });
+
         buttonAddProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,6 +205,55 @@ public class MainActivity extends AppCompatActivity {
             editTextQuantity.requestFocus();
             return isButtonClick = true;
         });
+    }
+
+    // ToDo  neuen Artikel anlegen
+    private AlertDialog createEditProduktDialog() {
+        Log.d(TAG, "createEditProduktDialog: ");
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+
+        View dialogsView = inflater.inflate(R.layout.dialog_artikel_neu, null);
+
+        final EditText editArtName = (EditText) dialogsView.findViewById(R.id.artName);
+        editArtName.setText(strProduct);
+
+        final Spinner editWarengruppe = (Spinner) dialogsView.findViewById(R.id.spnWg);
+
+        final Spinner editVonWo = (Spinner) dialogsView.findViewById(R.id.spnVonWo);
+
+
+        builder.setView(dialogsView)
+                .setTitle(R.string.dialog_title_pro)
+                .setPositiveButton(R.string.dialog_button_speichern, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        String name = editArtName.getText().toString();
+                        String warengruppe = editWarengruppe.getSelectedItem().toString();
+                        String vonWo = editVonWo.getSelectedItem().toString();
+
+                        if ((TextUtils.isEmpty(name))) {
+                            Log.d(TAG, "Ein Eintrag enthielt keinen Text. Daher Abbruch der Änderung.");
+                            Toast.makeText(MainActivity.this, "Artikelbezeichnung darf nicht leer sein", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        // An dieser Stelle schreiben wir den neuen Artikel in die SQLite Datenbank
+                        TblProdukt insertTblProdukt = dataSource.insertProdukt(name, warengruppe, vonWo);
+
+                        Log.d(TAG, "Neuer Eintrag - ID: " + insertTblProdukt.getID() + " Inhalt: " + insertTblProdukt.toString());
+
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(R.string.dialog_button_negative, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        return builder.create();
     }
 
     private void showAllListEntries() {
@@ -198,6 +310,7 @@ public class MainActivity extends AppCompatActivity {
         dataSource.close();
     }
 
+    // Einkaufsliste ändern
     private AlertDialog createEditShoppingMemoDialog(@org.jetbrains.annotations.NotNull final TblShoppingMemo shoppingMemo) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -351,5 +464,84 @@ public class MainActivity extends AppCompatActivity {
 //                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,1);
             }
         });
+    }
+
+    public void startScan(View view) {
+        Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+
+        intent.putExtra("SCAN_MODE","PRODUCT_MODE");
+        try{
+            startActivityForResult(intent,1);
+        }catch (ActivityNotFoundException e){
+            Toast.makeText(this, "Scanner nicht installiert", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(requestCode==1 && resultCode == RESULT_OK){
+            TextView tvProduct = findViewById(R.id.editText_product);
+            tvProduct.setText(getProductName(data.getStringExtra("SCAN_RESULT")));
+            //ToDo
+            //Artikel in der Produkttabelle anlegen, wenn nicht vorhanden
+            List<TblProdukt> produktList = dataSource.getAktProdukt(tvProduct.getText().toString());
+            if (!(produktList.size()>0)) {
+                strProduct = tvProduct.getText().toString();
+                createEditProduktDialog();
+            }
+            Log.d(TAG, "onActivityResult: "+ data.getStringExtra("SCAN_RESULT"));
+        }
+    }
+    private String getProductName(String scanResult){
+        HoleDatenTask task = new HoleDatenTask();
+        String result = null;
+        try {
+            result = task.execute(scanResult).get();
+            JSONObject rootObject = new JSONObject(result);
+            Log.d(TAG, "getProductName: "+rootObject.toString(2));
+            if(rootObject.has("product")){
+                JSONObject productObject = rootObject.getJSONObject("product");
+                if(productObject.has("product_name")){
+                    return productObject.getString("product_name");
+                }
+            }
+        } catch (InterruptedException e) {
+            Log.e(TAG, "", e);
+        } catch (ExecutionException e) {
+            Log.e(TAG, "", e);
+        } catch (JSONException e) {
+            Log.e(TAG, "", e);
+        }
+        return "Artikel nicht gefunden";
+    }
+
+    public class HoleDatenTask extends AsyncTask<String,Void,String> {
+
+
+        @Override
+        protected String doInBackground(String... strings) {
+            final String baseUrl = "https://world.openfoodfacts.org/api/v0/product/";
+            final String requestUrl = baseUrl + strings[0]+".json";
+            Log.d(TAG, "doInBackground: " + requestUrl);
+            StringBuilder result = new StringBuilder();
+            URL url = null;
+
+            try {
+                url = new URL(requestUrl);
+            } catch (MalformedURLException e) {
+                Log.e(TAG, "", e);
+            }
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()))){
+                String line;
+                while((line=reader.readLine())!=null){
+                    result.append(line);
+                }
+
+            }catch(IOException e){
+
+            }
+            Log.d(TAG, "doInBackground: " +result.toString());
+            return result.toString();
+        }
     }
 }

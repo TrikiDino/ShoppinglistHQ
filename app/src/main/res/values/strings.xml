@@ -22,6 +22,13 @@
     <string name="dialog_button_positive">Ändern</string>
     <string name="dialog_button_negative">Abbrechen</string>
 
+    <string name="dialog_title_pro">neuen Artikel anlegen</string>
+    <string name="dialog_title_name">Bezeichnung:</string>
+    <string name="dialog_title_wg">Warengruppe:</string>
+    <string name="dialog_title_vonwo">Geschäft:</string>
+    <string name="dialog_button_speichern">Speichern</string>
+
+
     <!--- Inhalt der DropDown-Listen -->
     <string-array name="wg_array">
         <item>Aufschnitt</item>
@@ -45,6 +52,7 @@
         <item>E-Center</item>
         <item>Edeka</item>
         <item>Hohmann</item>
+        <item>Lidl</item>
         <item>netto</item>
         <item>Postenbörse</item>
         <item>REWE</item>

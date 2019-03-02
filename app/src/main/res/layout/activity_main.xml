@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,39 +9,64 @@
 
     <EditText
         android:id="@+id/editText_quantity"
-        android:layout_width="80dp"
+        android:layout_width="65dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
         android:ems="10"
         android:hint="@string/et_hint_quantity"
-        android:inputType="number"
 
+        android:inputType="number"
         android:nextFocusDown="@id/editText_product"
+        app:layout_constraintEnd_toStartOf="@+id/editText_product"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/editText_product"
-        android:layout_width="0dp"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="24dp"
         android:ems="10"
-        android:inputType="text"
-        android:imeOptions="actionGo"
         android:hint="@string/et_hint_product"
+        android:imeOptions="actionGo"
+        android:inputType="text"
         app:layout_constraintEnd_toStartOf="@+id/btn_add_product"
-        app:layout_constraintStart_toEndOf="@+id/editText_quantity"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/spnEinh"
+        android:layout_width="101dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:entries="@array/einh_array"
+        app:layout_constraintEnd_toStartOf="@+id/spnWg"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText_product" />
+
+    <Spinner
+        android:id="@+id/spnWg"
+        android:layout_width="286dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:entries="@array/wg_array"
+        app:layout_constraintBottom_toTopOf="@+id/listview_shopping_memos"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_add_product"
+        app:layout_constraintVertical_bias="0.115" />
 
     <CheckBox
         android:id="@+id/btn_add_product"
-        android:layout_width="50dp"
+        android:layout_width="44dp"
         android:layout_height="42dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
         android:text="@string/bt_add_product"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -50,13 +74,29 @@
     <ListView
         android:id="@+id/listview_shopping_memos"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_height="384dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/floatingActionButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spnEinh"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="8dp"
+        android:clickable="true"
+        android:onClick="startScan"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_quantity" />
+        app:srcCompat="@android:drawable/ic_menu_camera" />
+
 </android.support.constraint.ConstraintLayout>

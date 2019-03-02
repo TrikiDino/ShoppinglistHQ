@@ -4,17 +4,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
 
     <TextView
         android:id="@+id/lblArtName"
         android:layout_width="105dp"
         android:layout_height="20dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="26dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
         android:text="Bezeichnung"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Bezeichnung:"/>
 
     <TextView
         android:id="@+id/lblWg"
@@ -22,9 +27,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="Artikelgruppe"
+        android:text="Warengruppe"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblArtName" />
+        app:layout_constraintTop_toBottomOf="@+id/lblArtName"
+        tools:text="Warengruppe:"/>
 
     <TextView
         android:id="@+id/lblGeschaeft"
@@ -34,7 +40,8 @@
         android:layout_marginTop="16dp"
         android:text="wird gekauft bei"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblWg" />
+        app:layout_constraintTop_toBottomOf="@+id/lblWg"
+        tools:text="wird gekauft bei:"/>
 
     <EditText
         android:id="@+id/artName"
@@ -60,7 +67,7 @@
         app:layout_constraintTop_toBottomOf="@+id/artName" />
 
     <Spinner
-        android:id="@+id/spnGeschaeft"
+        android:id="@+id/spnVonWo"
         android:layout_width="215dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

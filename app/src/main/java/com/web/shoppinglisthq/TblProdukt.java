@@ -8,6 +8,12 @@ public class TblProdukt {
     private String VonWo;
     private String Wg;
 
+    public TblProdukt(String name, String vonWo, String wg) {
+        Name = name;
+        VonWo = vonWo;
+        Wg = wg;
+    }
+
     public TblProdukt(String name) {
         Name = name;
     }
