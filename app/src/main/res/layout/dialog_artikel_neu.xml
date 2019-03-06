@@ -12,68 +12,101 @@
     <TextView
         android:id="@+id/lblArtName"
         android:layout_width="105dp"
-        android:layout_height="20dp"
+        android:layout_height="35dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
         android:text="Bezeichnung"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Bezeichnung:"/>
+        tools:text="Bezeichnung:" />
 
     <TextView
         android:id="@+id/lblWg"
         android:layout_width="105dp"
-        android:layout_height="wrap_content"
+        android:layout_height="35dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="Warengruppe"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblArtName"
-        tools:text="Warengruppe:"/>
+        app:layout_constraintTop_toBottomOf="@+id/lblEinh"
+        tools:text="Warengruppe:" />
 
     <TextView
         android:id="@+id/lblGeschaeft"
         android:layout_width="105dp"
-        android:layout_height="wrap_content"
+        android:layout_height="35dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="wird gekauft bei"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lblWg"
-        tools:text="wird gekauft bei:"/>
+        tools:text="wird gekauft bei:" />
 
     <EditText
         android:id="@+id/artName"
-        android:layout_width="215dp"
-        android:layout_height="40dp"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:ems="10"
         android:inputType="text"
         android:text="Name"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/lblArtName"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Spinner
-        android:id="@+id/spnWg"
-        android:layout_width="215dp"
-        android:layout_height="21dp"
+    <AutoCompleteTextView
+        android:id="@+id/actv_newWg_a"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:entries="@array/wg_array"
-        android:spinnerMode="dropdown"
+        android:hint="Warengruppe"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/lblWg"
-        app:layout_constraintTop_toBottomOf="@+id/artName" />
+        app:layout_constraintTop_toBottomOf="@+id/actv_newEinh_a" />
 
-    <Spinner
-        android:id="@+id/spnVonWo"
-        android:layout_width="215dp"
-        android:layout_height="wrap_content"
+    <AutoCompleteTextView
+        android:id="@+id/actv_newVonWo_a"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:entries="@array/geschaeft_array"
-        android:spinnerMode="dropdown"
+        android:hint="wird gekauft bei"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/lblGeschaeft"
-        app:layout_constraintTop_toBottomOf="@+id/spnWg" />
+        app:layout_constraintTop_toBottomOf="@+id/actv_newWg_a" />
+
+    <TextView
+        android:id="@+id/lblEinh"
+        android:layout_width="105dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Einheit"
+        app:layout_constraintBottom_toTopOf="@+id/lblWg"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblArtName" />
+
+    <AutoCompleteTextView
+        android:id="@+id/actv_newEinh_a"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Einheit"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/lblEinh"
+        app:layout_constraintTop_toBottomOf="@+id/artName" />
 </android.support.constraint.ConstraintLayout>

@@ -17,7 +17,7 @@
     <string name="cab_checked_string">ausgewählt</string>
 
     <string name="dialog_title">Listeneintrag ändern</string>
-    <string name="dialog_title_quantity">Anzahl:</string>
+    <string name="dialog_title_quantity">Anzahl/Einheit:</string>
     <string name="dialog_title_product">Produkt:</string>
     <string name="dialog_button_positive">Ändern</string>
     <string name="dialog_button_negative">Abbrechen</string>
@@ -29,7 +29,7 @@
     <string name="dialog_button_speichern">Speichern</string>
 
 
-    <!--- Inhalt der DropDown-Listen -->
+    <!--- Inhalt der DropDown-Listen//MultiAutoComplteTextView -->
     <string-array name="wg_array">
         <item>Aufschnitt</item>
         <item>Backwaren</item>
@@ -42,6 +42,7 @@
         <item>Obst</item>
         <item>Putzmittel</item>
         <item>Süßigkeiten</item>
+        <item>Tierfutter</item>
         <item>TiKo</item>
         <item>Trockenware</item>
         <item>Sonstiges</item>

@@ -12,11 +12,11 @@
     <TextView
         android:id="@+id/lblQuantity"
         android:layout_width="100dp"
-        android:layout_height="50dp"
+        android:layout_height="45dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:text="TextView"
+        android:text="@string/dialog_title_quantity"
         app:layout_constraintEnd_toStartOf="@+id/editText_new_quantity"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -24,15 +24,29 @@
 
     <EditText
         android:id="@+id/editText_new_quantity"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
+        android:layout_width="153dp"
+        android:layout_height="45dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
         android:ems="10"
+        android:hint="Anzahl"
         android:inputType="number"
         app:layout_constraintBottom_toTopOf="@+id/editText_new_product"
         app:layout_constraintStart_toEndOf="@+id/lblQuantity"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <AutoCompleteTextView
+        android:id="@+id/actv_newEinh_sm"
+        android:layout_width="117dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:entries="@array/einh_array"
+        android:hint="Einheit"
+        app:layout_constraintBottom_toTopOf="@+id/editText_new_product"
+        app:layout_constraintStart_toEndOf="@+id/editText_new_quantity"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -41,8 +55,8 @@
         android:layout_height="45dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="TextView"
+        android:layout_marginEnd="4dp"
+        android:text="@string/dialog_title_product"
         app:layout_constraintEnd_toStartOf="@+id/editText_new_product"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lblQuantity"
@@ -50,14 +64,97 @@
 
     <EditText
         android:id="@+id/editText_new_product"
-        android:layout_width="219dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="8dp"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:ems="10"
         android:inputType="text"
         android:text="Name"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/lblProduct"
         app:layout_constraintTop_toBottomOf="@+id/editText_new_quantity" />
+
+    <TextView
+        android:id="@+id/lblWg"
+        android:layout_width="100dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        android:text="Warengruppe"
+        app:layout_constraintEnd_toStartOf="@+id/actv_newWg_sm"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblPreis" />
+
+    <AutoCompleteTextView
+        android:id="@+id/actv_newWg_sm"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:entries="@array/wg_array"
+        android:hint="Warengruppe"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/lblWg"
+        app:layout_constraintTop_toBottomOf="@+id/editText_newPreis" />
+
+    <TextView
+        android:id="@+id/lblVonWo"
+        android:layout_width="100dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        android:text="kaufen bei"
+        app:layout_constraintEnd_toStartOf="@+id/actv_newVonWo_sm"
+        app:layout_constraintHorizontal_bias="0.333"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblWg" />
+
+    <AutoCompleteTextView
+        android:id="@+id/actv_newVonWo_sm"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:entries="@array/geschaeft_array"
+        android:hint="soll gekauft werden bei"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/lblVonWo"
+        app:layout_constraintTop_toBottomOf="@+id/actv_newWg_sm" />
+
+    <TextView
+        android:id="@+id/lblPreis"
+        android:layout_width="100dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="8dp"
+        android:text="Preis"
+        app:layout_constraintBottom_toTopOf="@+id/lblWg"
+        app:layout_constraintEnd_toStartOf="@+id/editText_newPreis"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblProduct" />
+
+    <EditText
+        android:id="@+id/editText_newPreis"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:ems="10"
+        android:hint="Preis"
+        android:inputType="number"
+        app:layout_constraintBottom_toTopOf="@+id/actv_newWg_sm"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/lblPreis"
+        app:layout_constraintTop_toBottomOf="@+id/editText_new_product" />
 
 </android.support.constraint.ConstraintLayout>

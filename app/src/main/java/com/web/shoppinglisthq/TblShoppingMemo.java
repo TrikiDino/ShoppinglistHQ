@@ -94,6 +94,44 @@ public class TblShoppingMemo {
 
     @Override
     public String toString() {
-        return quantity + " x " + product ;
+
+        //return quantity + " " + einh + " " + product + " von " + vonWo + " Preis:" + preis;
+        return quantity==0?product:String.format("%3d %5s %20s - %4.2f€", quantity, einh==null?"":einh,
+                    product==null?"":product, preis);
     }
+
+    // Konstanten für DataSource
+    public static final String TABLE_NAME = "shopping_list";
+
+    public enum COLUMN {
+        _ID("_id"),
+        PRODUCT("product"),
+        EINH("einh"),
+        QUANTITY("quantity"),
+        CHECKED("checked"),
+        PREIS("preis"),
+        WARENGRUPPE("warenGruppe"),
+        VONWO("vonWo");
+
+        private String name;
+
+        COLUMN(String name) { this.name = name; }
+
+        public String bez(){ return name; }
+    }
+    public static final String SQL_CREATE =
+            "CREATE TABLE " + TABLE_NAME +
+                    "(" + COLUMN._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    COLUMN.PRODUCT + " TEXT NOT NULL, " +
+                    COLUMN.QUANTITY + " INTEGER NOT NULL, " +
+                    COLUMN.EINH + " STRING DEFAULT 'Stck', " +
+                    COLUMN.CHECKED + " BOOLEAN DEFAULT 0, " +
+                    COLUMN.PREIS + " DOUBLE DEFAULT 0, " +
+                    COLUMN.WARENGRUPPE + " TEXT DEFAULT 'Sonstiges', " +
+                    COLUMN.VONWO + " TEXT DEFAULT 'Sonstige');";
+
+    public static final String SQL_DROP = "DROP TABLE IF EXISTS " + TABLE_NAME;
+
+    public static final String SQL_DEL = "DELETE FROM " + TABLE_NAME;
+
 }

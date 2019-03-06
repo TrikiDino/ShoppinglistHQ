@@ -28,7 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Spinner;
+import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
     private ShoppingMemoDataSource dataSource;
     private boolean isButtonClick = true;
     private ListView mShoppingMemosListView;
+    private AutoCompleteTextView actvEinh;
+    private AutoCompleteTextView actvVonWo;
+    private AutoCompleteTextView actvArtikel;
 
     public String strProduct = "";
     public boolean productNeu = false;
@@ -62,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         //ShoppingMemo testMemo = new ShoppingMemo("Birnen",5,102);
         //Log.d(TAG, "Inhalt der Testmemo: " + testMemo.toString());
 
-        Log.d(TAG, "Das Datenquellen-Objekt wird angelegt.");
+        Log.d(TAG, "##Das Datenquellen-Objekt wird angelegt.");
         dataSource = new ShoppingMemoDataSource(this);
 
 //        Log.d(TAG, "Die Datenquelle wird geöffnet.");
@@ -82,6 +85,28 @@ public class MainActivity extends AppCompatActivity {
 
         activateAddButton();
         initializeContextualActionBar();
+
+
+        // ToDo fülle MultiAutoComplete in activity_main mit Werten - OK
+        actvArtikel = (AutoCompleteTextView) findViewById(R.id.editText_product);
+        actvEinh = (AutoCompleteTextView) findViewById(R.id.actv_Einh);
+        actvVonWo = (AutoCompleteTextView) findViewById(R.id.actv_VonWo);
+
+        ArrayAdapter adapterEinh = new ArrayAdapter(this, android.R.layout.simple_list_item_1,
+                getResources().getStringArray(R.array.einh_array));
+        ArrayAdapter adapterVonWo = new ArrayAdapter(this, android.R.layout.simple_list_item_1,
+                getResources().getStringArray(R.array.geschaeft_array));
+        // ToDo Artikeladapter aus Datenbank füllen
+        ArrayAdapter adapterArtikel = new ArrayAdapter(this, android.R.layout.simple_list_item_1,
+                dataSource.getAlleArtikel());
+
+        actvArtikel.setAdapter(adapterArtikel);
+        actvArtikel.setThreshold(1);
+        actvEinh.setAdapter(adapterEinh);
+        actvEinh.setThreshold(1);
+        actvVonWo.setAdapter(adapterVonWo);
+        actvVonWo.setThreshold(1);
+
     }
 
     private void initializeShoppingMemosList() {
@@ -89,19 +114,19 @@ public class MainActivity extends AppCompatActivity {
 
         mShoppingMemosListView = findViewById(R.id.listview_shopping_memos);
         ArrayAdapter<TblShoppingMemo> shoppingMemoArrayAdapter = new ArrayAdapter<TblShoppingMemo>(this,
-                android.R.layout.simple_list_item_multiple_choice, emptyListForInitialisation){
+                android.R.layout.simple_list_item_multiple_choice, emptyListForInitialisation) {
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View view =  super.getView(position, convertView, parent);
+                View view = super.getView(position, convertView, parent);
                 TextView textView = (TextView) view;
 
                 TblShoppingMemo memo = (TblShoppingMemo) mShoppingMemosListView.getItemAtPosition(position);
-                if(memo.isChecked()){
-                    textView.setPaintFlags(textView.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
-                     textView.setTextColor(Color.GRAY);
+                if (memo.isChecked()) {
+                    textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    textView.setTextColor(Color.GRAY);
                 } else {
-                    textView.setPaintFlags(textView.getPaintFlags() &(~Paint.STRIKE_THRU_TEXT_FLAG));
+                    textView.setPaintFlags(textView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
                     textView.setTextColor(Color.DKGRAY);
                 }
 
@@ -112,9 +137,12 @@ public class MainActivity extends AppCompatActivity {
         mShoppingMemosListView.setAdapter(shoppingMemoArrayAdapter);
 
         mShoppingMemosListView.setOnItemClickListener((parent, view, position, id) -> {
-            TblShoppingMemo memo =(TblShoppingMemo) parent.getItemAtPosition(position);
-            TblShoppingMemo updateMemo = dataSource.updateShoppingMemo(memo.getId(),memo.getProduct(),
-                    memo.getQuantity(),!memo.isChecked());
+            TblShoppingMemo memo = (TblShoppingMemo) parent.getItemAtPosition(position);
+//            TblShoppingMemo updateMemo = dataSource.updateShoppingMemo(memo.getId(),memo.getProduct(),
+//                    memo.getQuantity(),!memo.isChecked());
+            TblShoppingMemo updateMemo = dataSource.updateShoppingMemo(memo.getId(), memo.getProduct(),
+                    memo.getQuantity(), memo.getEinh(), !memo.isChecked(), memo.getPreis(),
+                    memo.getWarenGruppe(), memo.getVonWo());
             showAllListEntries();
         });
     }
@@ -123,27 +151,30 @@ public class MainActivity extends AppCompatActivity {
         final Button buttonAddProduct = (Button) findViewById(R.id.btn_add_product);
         final EditText editTextQuantity = (EditText) findViewById(R.id.editText_quantity);
         final EditText editTextProdukt = (EditText) findViewById(R.id.editText_product);
+        final AutoCompleteTextView actvEinh = (AutoCompleteTextView) findViewById(R.id.actv_Einh);
+        final EditText editTextPreis = (EditText) findViewById(R.id.editText_Preis);
+        final AutoCompleteTextView actvVonWo = (AutoCompleteTextView) findViewById(R.id.actv_VonWo);
 
         editTextProdukt.addTextChangedListener(new TextWatcher() {
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                Log.d(TAG, "beforeTextChanged: s:" + s + " start:" + start + " count:" + count + " after:" + after);
+                Log.d(TAG, "##beforeTextChanged: s:" + s + " start:" + start + " count:" + count + " after:" + after);
                 strProduct = s.toString();
                 List<TblProdukt> produktList = dataSource.getAktProdukt(strProduct);
-                if(produktList!=null) {
-                    Log.d(TAG, "beforeTextChanged: " + produktList.toString());
+                if (produktList != null) {
+                    Log.d(TAG, "##beforeTextChanged: " + produktList.toString());
                     if (produktList.size() > 0) {
-                        // ToDo Spinner füllen
+
                     }
                 } else {
-                    Log.d(TAG, "beforeTextChanged: Tabelle ist leer");
+                    Log.d(TAG, "##beforeTextChanged: Tabelle ist leer");
                 }
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                // ToDo String[] für AutoCompleteTextView füllen - ?? - evtl Tabellen anlegen
             }
 
             @Override
@@ -155,17 +186,18 @@ public class MainActivity extends AppCompatActivity {
         editTextProdukt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                Log.d(TAG, "onFocusChange: " + strProduct);
-                if(!((strProduct==null)||(strProduct.length()==0))) {
+                Log.d(TAG, "##onFocusChange: " + strProduct);
+                if (!((strProduct == null) || (strProduct.length() == 0))) {
                     List<TblProdukt> produktList = dataSource.getAktProdukt(strProduct);
-                    productNeu = ((produktList == null)||(produktList.size()==0));
-                    Log.d(TAG, "onFocusChange: " + productNeu);
+                    productNeu = ((produktList == null) || (produktList.size() == 0));
+                    Log.d(TAG, "##onFocusChange: " + productNeu);
                     if (productNeu) {
                         // neuen Artikel erfassen
-                        Log.d(TAG, "onFocusChange: Artikel erfassen");
+                        Log.d(TAG, "##onFocusChange: Artikel erfassen");
                         AlertDialog editProduktDialog = createEditProduktDialog();
                         editProduktDialog.show();
                     }
+                    strProduct = "";
                 }
             }
         });
@@ -175,6 +207,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String quantityString = editTextQuantity.getText().toString();
                 String product = editTextProdukt.getText().toString();
+                String einh = actvEinh.getText().toString();
+                boolean checked = false;
+                String preisString = editTextPreis.getText().toString();
+                preisString = (preisString==null)|(preisString.equals(""))?"0":preisString;
+                String vonWo = actvVonWo.getText().toString();
+                String wg = "";
 
                 if (TextUtils.isEmpty(quantityString)) {
                     editTextQuantity.setError(getString(R.string.editText_errorMessage));
@@ -185,10 +223,14 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 int quantity = Integer.parseInt(quantityString);
+                double preis = Double.parseDouble(preisString);
                 editTextQuantity.setText("");
                 editTextProdukt.setText("");
+                actvEinh.setText("");
+                editTextPreis.setText("");
+                actvVonWo.setText("");
 
-                dataSource.createShoppingMemo(product, quantity);
+                dataSource.createShoppingMemo(product, quantity, einh, checked, preis, wg, vonWo);
 
                 InputMethodManager inputMethodManager;
                 inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
@@ -209,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
 
     // ToDo  neuen Artikel anlegen
     private AlertDialog createEditProduktDialog() {
-        Log.d(TAG, "createEditProduktDialog: ");
+        Log.d(TAG, "##createEditProduktDialog: ");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
@@ -217,12 +259,30 @@ public class MainActivity extends AppCompatActivity {
         View dialogsView = inflater.inflate(R.layout.dialog_artikel_neu, null);
 
         final EditText editArtName = (EditText) dialogsView.findViewById(R.id.artName);
+        EditText editText_produkt = (EditText) dialogsView.findViewById(R.id.editText_product);
         editArtName.setText(strProduct);
 
-        final Spinner editWarengruppe = (Spinner) dialogsView.findViewById(R.id.spnWg);
+        final AutoCompleteTextView editEinh = (AutoCompleteTextView) dialogsView.findViewById(R.id.actv_newEinh_a);
+        final AutoCompleteTextView editWarengruppe = (AutoCompleteTextView) dialogsView.findViewById(R.id.actv_newWg_a);
+        final AutoCompleteTextView editVonWo = (AutoCompleteTextView) dialogsView.findViewById(R.id.actv_newVonWo_a);
 
-        final Spinner editVonWo = (Spinner) dialogsView.findViewById(R.id.spnVonWo);
+        // ToDo MultiAutoText füllen für neuen Artikel
+        ArrayAdapter adapterEinh = new ArrayAdapter(this, android.R.layout.simple_list_item_1,
+                getResources().getStringArray(R.array.einh_array));
+        ArrayAdapter adapterVonWo = new ArrayAdapter(this, android.R.layout.simple_list_item_1,
+                getResources().getStringArray(R.array.geschaeft_array));
+        ArrayAdapter adapterWg = new ArrayAdapter(this, android.R.layout.simple_list_item_1,
+                getResources().getStringArray(R.array.wg_array));
 
+        editEinh.setAdapter(adapterEinh);
+        editEinh.setThreshold(1);
+        editWarengruppe.setAdapter(adapterWg);
+        editWarengruppe.setThreshold(1);
+        editVonWo.setAdapter(adapterVonWo);
+        editVonWo.setThreshold(1);
+
+//        editEinh.setText(((EditText)dialogsView.findViewById(R.id.actv_Einh)).getText());
+//        editVonWo.setText(((EditText)dialogsView.findViewById(R.id.actv_VonWo)).getText());
 
         builder.setView(dialogsView)
                 .setTitle(R.string.dialog_title_pro)
@@ -230,8 +290,11 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         String name = editArtName.getText().toString();
-                        String warengruppe = editWarengruppe.getSelectedItem().toString();
-                        String vonWo = editVonWo.getSelectedItem().toString();
+                        // ToDo Wert aus Warengruppe auslesen - OK
+                        String warengruppe = editWarengruppe.getText().toString();
+                         // ToDo Wert aus Geschäft auslesen - OK
+                        String vonWo = editVonWo.getText().toString();
+                        String einh = editEinh.getText().toString();
 
                         if ((TextUtils.isEmpty(name))) {
                             Log.d(TAG, "Ein Eintrag enthielt keinen Text. Daher Abbruch der Änderung.");
@@ -240,9 +303,9 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         // An dieser Stelle schreiben wir den neuen Artikel in die SQLite Datenbank
-                        TblProdukt insertTblProdukt = dataSource.insertProdukt(name, warengruppe, vonWo);
+                        TblProdukt insertTblProdukt = dataSource.insertProdukt(name, warengruppe, vonWo, einh);
 
-                        Log.d(TAG, "Neuer Eintrag - ID: " + insertTblProdukt.getID() + " Inhalt: " + insertTblProdukt.toString());
+                        Log.d(TAG, "##Neuer Eintrag - ID: " + insertTblProdukt.getId() + " Inhalt: " + insertTblProdukt.toString());
 
                         dialog.dismiss();
                     }
@@ -258,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void showAllListEntries() {
         List<TblShoppingMemo> shoppingMemoList = dataSource.getAllShoppingMemos();
-        ArrayAdapter<TblShoppingMemo> adapter = (ArrayAdapter<TblShoppingMemo>)mShoppingMemosListView.getAdapter();
+        ArrayAdapter<TblShoppingMemo> adapter = (ArrayAdapter<TblShoppingMemo>) mShoppingMemosListView.getAdapter();
         adapter.clear();
         adapter.addAll(shoppingMemoList);
         adapter.notifyDataSetChanged();
@@ -295,10 +358,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        Log.d(TAG, "Die Datenquelle wird geöffnet.");
+        Log.d(TAG, "##Die Datenquelle wird geöffnet.");
         dataSource.open();
 
-        Log.d(TAG, "Folgende Einträge sind in der Datenbank vorhanden:");
+        Log.d(TAG, "##Folgende Einträge sind in der Datenbank vorhanden:");
         showAllListEntries();
     }
 
@@ -306,13 +369,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        Log.d(TAG, "Die Datenquelle wird geschlossen.");
+        Log.d(TAG, "##Die Datenquelle wird geschlossen.");
         dataSource.close();
     }
 
     // Einkaufsliste ändern
     private AlertDialog createEditShoppingMemoDialog(@org.jetbrains.annotations.NotNull final TblShoppingMemo shoppingMemo) {
 
+        // ToDo zusätzliche Felder im Änderungsdialog einfügen - OK
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
 
@@ -324,6 +388,31 @@ public class MainActivity extends AppCompatActivity {
         final EditText editTextNewProduct = (EditText) dialogsView.findViewById(R.id.editText_new_product);
         editTextNewProduct.setText(shoppingMemo.getProduct());
 
+        final EditText editTextNewPreis = (EditText) dialogsView.findViewById(R.id.editText_newPreis);
+        editTextNewPreis.setText(String.format("%.2f €", shoppingMemo.getPreis()));
+
+        final AutoCompleteTextView actvNewEinh = (AutoCompleteTextView) dialogsView.findViewById(R.id.actv_newEinh_sm);
+        final AutoCompleteTextView actvNewWg = (AutoCompleteTextView) dialogsView.findViewById((R.id.actv_newWg_sm));
+        final AutoCompleteTextView actvNewVonWo = (AutoCompleteTextView) dialogsView.findViewById(R.id.actv_newVonWo_sm);
+
+        // ToDo MultiAutoText füllen für edit_Shoppinglist - OK
+        Log.d(TAG, "createEditShoppingMemoDialog: AutoCompleteTextView füllen");
+        ArrayAdapter adapterEinh = new ArrayAdapter(this, android.R.layout.simple_list_item_1,
+                getResources().getStringArray(R.array.einh_array));
+        ArrayAdapter adapterVonWo = new ArrayAdapter(this, android.R.layout.simple_list_item_1,
+                getResources().getStringArray(R.array.geschaeft_array));
+        ArrayAdapter adapterWg = new ArrayAdapter(this, android.R.layout.simple_list_item_1,
+                getResources().getStringArray(R.array.wg_array));
+
+        actvNewEinh.setAdapter(adapterEinh);
+        actvNewEinh.setThreshold(1);
+        actvNewWg.setAdapter(adapterWg);
+        actvNewWg.setThreshold(1);
+        actvNewVonWo.setAdapter(adapterVonWo);
+        actvNewVonWo.setThreshold(1);
+
+        Log.d(TAG, "##createEditShoppingMemoDialog: AutoCompleteTextView gefüllt");
+
         builder.setView(dialogsView)
                 .setTitle(R.string.dialog_title)
                 .setPositiveButton(R.string.dialog_button_positive, new DialogInterface.OnClickListener() {
@@ -331,21 +420,31 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int id) {
                         String quantityString = editTextNewQuantity.getText().toString();
                         String product = editTextNewProduct.getText().toString();
+                        String einh = actvNewEinh.getText().toString();
+                        String preisString = editTextNewPreis.getText().toString();
+                        String wg = actvNewWg.getText().toString();
+                        String vonWo = actvNewVonWo.getText().toString();
 
 
                         if ((TextUtils.isEmpty(quantityString)) || (TextUtils.isEmpty(product))) {
-                            Log.d(TAG, "Ein Eintrag enthielt keinen Text. Daher Abbruch der Änderung.");
+                            Log.d(TAG, "##Ein Eintrag enthielt keinen Text. Daher Abbruch der Änderung.");
                             Toast.makeText(MainActivity.this, "Felder dürfen nicht leere sein", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
                         int quantity = Integer.parseInt(quantityString);
+                        double preis = Double.parseDouble(preisString.substring(0, preisString.length() - 2));
 
                         // An dieser Stelle schreiben wir die geänderten Daten in die SQLite Datenbank
-                        TblShoppingMemo updatedShoppingMemo = dataSource.updateShoppingMemo(shoppingMemo.getId(), product, quantity, shoppingMemo.isChecked());
+                        //TblShoppingMemo updatedShoppingMemo = dataSource.updateShoppingMemo(shoppingMemo.getId(), product, quantity, shoppingMemo.isChecked());
+                        //ToDo auch Warengruppe, Geschäft, Preis und Einheit speichern
+                        Log.d(TAG, "##onClick: " + shoppingMemo.getId() + product + quantity + einh + shoppingMemo.isChecked() + preis + wg + vonWo);
 
-                        Log.d(TAG, "Alter Eintrag - ID: " + shoppingMemo.getId() + " Inhalt: " + shoppingMemo.toString());
-                        Log.d(TAG, "Neuer Eintrag - ID: " + updatedShoppingMemo.getId() + " Inhalt: " + updatedShoppingMemo.toString());
+                        TblShoppingMemo updatedShoppingMemo = dataSource.updateShoppingMemo(shoppingMemo.getId(),
+                                product, quantity, einh, shoppingMemo.isChecked(), preis, wg, vonWo);
+
+                        Log.d(TAG, "##Alter Eintrag - ID: " + shoppingMemo.getId() + " Inhalt: " + shoppingMemo.toString());
+                        Log.d(TAG, "##Neuer Eintrag - ID: " + updatedShoppingMemo.getId() + " Inhalt: " + updatedShoppingMemo.toString());
 
                         showAllListEntries();
                         dialog.dismiss();
@@ -420,7 +519,7 @@ public class MainActivity extends AppCompatActivity {
                             if (isChecked) {
                                 int postitionInListView = touchedShoppingMemosPositions.keyAt(i);
                                 TblShoppingMemo shoppingMemo = (TblShoppingMemo) shoppingMemosListView.getItemAtPosition(postitionInListView);
-                                Log.d(TAG, "Position im ListView: " + postitionInListView + " Inhalt: " + shoppingMemo.toString());
+                                Log.d(TAG, "##Position im ListView: " + postitionInListView + " Inhalt: " + shoppingMemo.toString());
                                 dataSource.deleteShoppingMemo(shoppingMemo);
                             }
                         }
@@ -429,13 +528,13 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case R.id.cab_change:
-                        Log.d(TAG, "Eintrag ändern");
+                        Log.d(TAG, "##Eintrag ändern");
                         for (int i = 0; i < touchedShoppingMemosPositions.size(); i++) {
                             boolean isChecked = touchedShoppingMemosPositions.valueAt(i);
                             if (isChecked) {
                                 int postitionInListView = touchedShoppingMemosPositions.keyAt(i);
                                 TblShoppingMemo shoppingMemo = (TblShoppingMemo) shoppingMemosListView.getItemAtPosition(postitionInListView);
-                                Log.d(TAG, "Position im ListView: " + postitionInListView + " Inhalt: " + shoppingMemo.toString());
+                                Log.d(TAG, "##Position im ListView: " + postitionInListView + " Inhalt: " + shoppingMemo.toString());
 
                                 AlertDialog editShoppingMemoDialog = createEditShoppingMemoDialog(shoppingMemo);
                                 editShoppingMemoDialog.show();
@@ -469,39 +568,43 @@ public class MainActivity extends AppCompatActivity {
     public void startScan(View view) {
         Intent intent = new Intent("com.google.zxing.client.android.SCAN");
 
-        intent.putExtra("SCAN_MODE","PRODUCT_MODE");
-        try{
-            startActivityForResult(intent,1);
-        }catch (ActivityNotFoundException e){
+        intent.putExtra("SCAN_MODE", "PRODUCT_MODE");
+        try {
+            startActivityForResult(intent, 1);
+        } catch (ActivityNotFoundException e) {
             Toast.makeText(this, "Scanner nicht installiert", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode==1 && resultCode == RESULT_OK){
+        if (requestCode == 1 && resultCode == RESULT_OK) {
             TextView tvProduct = findViewById(R.id.editText_product);
             tvProduct.setText(getProductName(data.getStringExtra("SCAN_RESULT")));
-            //ToDo
-            //Artikel in der Produkttabelle anlegen, wenn nicht vorhanden
             List<TblProdukt> produktList = dataSource.getAktProdukt(tvProduct.getText().toString());
-            if (!(produktList.size()>0)) {
-                strProduct = tvProduct.getText().toString();
-                createEditProduktDialog();
+            if (produktList.size() > 0) {
+                // ToDo Artikelinformationen übertragen, wenn Artikel vorhanden
+                TextView tvPreis = findViewById(R.id.editText_Preis);
+                AutoCompleteTextView actvEinh = findViewById(R.id.actv_newEinh_sm);
+                AutoCompleteTextView actvVonWo = findViewById(R.id.actv_newVonWo_sm);
+                tvPreis.setText(String.format("%.2f €", produktList.get(0).getDurchpreis()));
+                // ToDo Wert in Einheit eintragen
+                // ToDo Wert in Geschäft eintragen
             }
-            Log.d(TAG, "onActivityResult: "+ data.getStringExtra("SCAN_RESULT"));
+            Log.d(TAG, "##onActivityResult: " + data.getStringExtra("SCAN_RESULT"));
         }
     }
-    private String getProductName(String scanResult){
+
+    private String getProductName(String scanResult) {
         HoleDatenTask task = new HoleDatenTask();
         String result = null;
         try {
             result = task.execute(scanResult).get();
             JSONObject rootObject = new JSONObject(result);
-            Log.d(TAG, "getProductName: "+rootObject.toString(2));
-            if(rootObject.has("product")){
+            Log.d(TAG, "##getProductName: " + rootObject.toString(2));
+            if (rootObject.has("product")) {
                 JSONObject productObject = rootObject.getJSONObject("product");
-                if(productObject.has("product_name")){
+                if (productObject.has("product_name")) {
                     return productObject.getString("product_name");
                 }
             }
@@ -515,14 +618,14 @@ public class MainActivity extends AppCompatActivity {
         return "Artikel nicht gefunden";
     }
 
-    public class HoleDatenTask extends AsyncTask<String,Void,String> {
+    public class HoleDatenTask extends AsyncTask<String, Void, String> {
 
 
         @Override
         protected String doInBackground(String... strings) {
             final String baseUrl = "https://world.openfoodfacts.org/api/v0/product/";
-            final String requestUrl = baseUrl + strings[0]+".json";
-            Log.d(TAG, "doInBackground: " + requestUrl);
+            final String requestUrl = baseUrl + strings[0] + ".json";
+            Log.d(TAG, "##doInBackground: " + requestUrl);
             StringBuilder result = new StringBuilder();
             URL url = null;
 
@@ -531,16 +634,16 @@ public class MainActivity extends AppCompatActivity {
             } catch (MalformedURLException e) {
                 Log.e(TAG, "", e);
             }
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()))){
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()))) {
                 String line;
-                while((line=reader.readLine())!=null){
+                while ((line = reader.readLine()) != null) {
                     result.append(line);
                 }
 
-            }catch(IOException e){
+            } catch (IOException e) {
 
             }
-            Log.d(TAG, "doInBackground: " +result.toString());
+            Log.d(TAG, "##doInBackground: " + result.toString());
             return result.toString();
         }
     }
