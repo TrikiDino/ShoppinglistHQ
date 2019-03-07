@@ -73,4 +73,16 @@
         <item>Pck</item>
         <item>Stck</item>
     </string-array>
+
+    <!-- Templates und Konstante für die Übergabe der SQL-Parameter -->
+    <string name="where">%1$s</string>
+    <string name="WHERE"> WHERE</string>
+    <string name="and">%1$s</string>
+    <string name="AND"> AND </string>
+    <string name="or">%1$s</string>
+    <string name="OR"> OR </string>
+    <string name="order">%1$s</string>
+    <string name="ORDER"> ORDER BY </string>
+
+    <string name="sqlCreate"></string>
 </resources>

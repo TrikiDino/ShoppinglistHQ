@@ -1,15 +1,15 @@
 package com.web.shoppinglisthq;
 
 public class TblWarengruppe {
-    private int ID;
+    private int _ID;
     private String warenGruppe;
 
     public TblWarengruppe(String warenGruppe) {
         this.warenGruppe = warenGruppe;
     }
 
-    public int getID() {
-        return ID;
+    public int get_ID() {
+        return _ID;
     }
 
     public String getWarenGruppe() {

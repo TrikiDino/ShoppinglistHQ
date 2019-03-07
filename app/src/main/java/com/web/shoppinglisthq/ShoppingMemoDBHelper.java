@@ -45,6 +45,8 @@ public class ShoppingMemoDBHelper extends SQLiteOpenHelper {
         try {
             Log.d(TAG, "##Die Tabelle Warengruppe wird mit dem SQL-Befehl: " + TblWarengruppe.SQL_CREATE + " angelegt.");
             db.execSQL(TblWarengruppe.SQL_CREATE);
+            Log.d(TAG, "## und mit den Standardwerten gefüllt");
+
         }
         catch (Exception e) {
             Log.e(TAG, "##Fehler beim Anlegen der Tabelle: ", e);
